@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { type Round } from '@/types/player'
+import { type Round, type Player } from '@/types/player'
 import { useScoreStore } from '@/stores/score-store'
 
 import { isClient } from '@vueuse/shared'
@@ -57,13 +57,13 @@ function updateSharingText()
 
   // scoreStore.players has the player names and scoreStore.rounds has the array of rounds with the scores
   // for each player, we print the name, then the score for each round separated by +, then the total score
-  const text = scoreStore.players.map((player: string, playerIndex: number) =>
+  const text = scoreStore.players.map((player: Player, playerIndex: number) =>
   {
     const playerTotal = scoreStore.rounds.reduce((total: number, round: Round) => total + (round.scores[playerIndex] || 0), 0)
-    return `${player}: ${scoreStore.rounds.map((round: Round) => round.scores[playerIndex] || 0).join(' + ')} = ${playerTotal}`
+    return `${player.name || player.placeholder}: ${scoreStore.rounds.map((round: Round) => round.scores[playerIndex] || 0).join(' + ')} = ${playerTotal}`
   }).join('\n')
 
-  options.value.text = text
+  options.value.text = text + '\n'
   console.log('updateSharingText done')
 }
 
@@ -93,7 +93,7 @@ function updateSharingHtml()
   ${scoreStore.rounds.map((round: Round, roundIndex: number) => `<th>Round ${roundIndex + 1}</th>`).join('')}
   <th>Total</th>
   </tr>
-  ${scoreStore.players.map((player: string, playerIndex: number) => `<tr><td><b>${player}</b></td>${scoreStore.rounds.map((round: Round) => `<td>${round.scores[playerIndex] || 0}</td>`).join('')}<td><b>${scoreStore.rounds.reduce((total: number, round: Round) => total + (round.scores[playerIndex] || 0), 0)}</b></td></tr>`).join('')}
+  ${scoreStore.players.map((player: Player, playerIndex: number) => `<tr><td><b>${player.name || player.placeholder}</b></td>${scoreStore.rounds.map((round: Round) => `<td>${round.scores[playerIndex] || 0}</td>`).join('')}<td><b>${scoreStore.rounds.reduce((total: number, round: Round) => total + (round.scores[playerIndex] || 0), 0)}</b></td></tr>`).join('')}
   </table>
   </body>
   </html>
@@ -109,6 +109,11 @@ function startShare()
   console.log('startShare')
   updateSharingText()
   updateSharingHtml()
+  try {
+    updateSharingScreenshot()
+  } catch (error) {
+    // ignore error
+  }
   share().catch(err => err)
   console.log('startShare done')
 }
