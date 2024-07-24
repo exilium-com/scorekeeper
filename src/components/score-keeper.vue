@@ -61,33 +61,33 @@ onMounted(() => {
 </script>
 
 <template>
-    <v-container class="fill-height">
+    <div class="fill-height">
         <v-responsive class="align-centerfill-height mx-auto" max-width="900">
             <v-row>
                 <v-col cols="12">
-                    <v-table  fixed-header height="80vh" density="compact">
+                    <v-table  fixed-header height="80vh" density="compact" class="ma-0 pa-0">
                         <thead>
                             <tr>
-                                <th>
+                                <th class="text-center">
                                     <v-btn variant="text" icon="mdi-account-plus" @click="scoreStore.addPlayer"></v-btn>
                                 </th>
                                 <th v-for="(_, playerIndex) in scoreStore.players" :key="playerIndex">
-                                    <v-text-field reverse variant="plain" v-model="scoreStore.players[playerIndex].name" :placeholder="scoreStore.players[playerIndex].placeholder">
+                                    <v-text-field class="custom-text-field py-1" hide-details hide-spin-buttons reverse variant="plain" v-model="scoreStore.players[playerIndex].name" :placeholder="scoreStore.players[playerIndex].placeholder">
                                     </v-text-field>
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(round, roundIndex) in scoreStore.rounds" :key="roundIndex">
-                                <td>{{ scoreStore.rounds.length > 1 ? round.round : ""  }}</td>
+                                <td class="text-center" style="color:#5c8ea7 ;">{{ scoreStore.rounds.length > 1 ? round.round : ""  }}</td>
                                 <td v-for="(score, scoreIndex) in round.scores" :key="scoreIndex">
-                                    <v-text-field reverse class="text-right" density="compact" :variant="typeof score === 'number' ? 'plain' : 'underlined'" placeholder="0" v-model.number="round.scores[scoreIndex]" :autofocus="roundIndex==state.autofocus.round  &&  scoreIndex==state.autofocus.score"></v-text-field>
+                                    <v-text-field class="text-right custom-text-field py-1" type="number" hide-details hide-spin-buttons reverse single-line density="compact" :variant="typeof score === 'number' ? 'plain' : 'underlined'" placeholder="0" v-model.number="round.scores[scoreIndex]" :autofocus="roundIndex==state.autofocus.round  &&  scoreIndex==state.autofocus.score"></v-text-field>
                                 </td>
                             </tr>
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td><v-avatar><v-icon icon="mdi-sigma"/></v-avatar></td>
+                                <td class="text-center"><v-avatar><v-icon icon="mdi-sigma"/></v-avatar></td>
                                 <td v-for="(total, index) in scoreStore.playersTotal" :key="index" class="text-right">
                                     {{ total }}
                                 </td>
@@ -97,7 +97,7 @@ onMounted(() => {
                 </v-col>
             </v-row>
         </v-responsive>
-    </v-container>
+    </div>
 </template>
 
 <style scoped>
@@ -111,21 +111,23 @@ tbody {
     background-color: #333;
 }
 
-table,
-th,
 td {
-    border-collapse: collapse;
+    border-width: 1px;
+    border-color: #2c5e77 !important;
+    border-right-style: solid;
 }
 
-td {
-    border: 1px solid #2c5e77;
-    border-top: none !important;
-    border-bottom: none !important;
-}
-
-table > thead > tr > th
+table > thead > tr > th, table > tfoot > tr > td
 {
+    padding: 0 4px !important;
     background-color: #2c5e77 !important;
     color: #fff;
 }
+
+table > tbody > tr > td {
+    padding: 0 4px !important;
+}
+
+.custom-text-field /deep/ .v-field__input { padding: 0; }
+
 </style>
