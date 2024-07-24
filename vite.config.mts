@@ -4,6 +4,7 @@ import Vue from '@vitejs/plugin-vue'
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 import ViteFonts from 'unplugin-fonts/vite'
 import VueRouter from 'unplugin-vue-router/vite'
+import { resolve } from 'path'
 
 // Utilities
 import { defineConfig } from 'vite'
@@ -47,6 +48,14 @@ export default defineConfig({
       '.tsx',
       '.vue',
     ],
+  },
+  build: {
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        custom404: resolve(__dirname, '404.html'),
+      },
+    },
   },
   server: {
     port: 3000,
