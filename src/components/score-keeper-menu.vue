@@ -25,7 +25,7 @@ const scoreStore = useScoreStore()
                 <v-divider></v-divider>
 
                 <v-list-item v-for="(player, playerIndex) in scoreStore.players" :key="playerIndex" @click="scoreStore.deletePlayer(playerIndex)">
-                    <v-list-item-title>{{ player }}</v-list-item-title>
+                    <v-list-item-title>{{ player.name ? player.name : player.placeholder }}</v-list-item-title>
                     <template v-slot:append>
                         <v-icon icon="mdi-delete-outline"></v-icon>
                     </template>

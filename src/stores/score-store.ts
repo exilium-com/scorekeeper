@@ -1,29 +1,31 @@
 import { defineStore } from 'pinia'
-import { Round } from '@/types/player'
+import { Round, Player } from '@/types/player'
 import { ref } from 'vue'
 
-export const useScoreStore = defineStore('score',
+const VERSION = '0.1'
+
+export const useScoreStore = defineStore('score' + VERSION,
     () => {
-        let players = ref<string[]>([])
+        let players = ref<Player[]>([])
         let rounds = ref<Round[]>([])
         let playersTotal = ref<number[]>([])
+        let lastPlayerNumber = 1
 
         function addPlayer() {
-            players.value.push('player' + (players.value.length + 1))
+            players.value.push({name: '', placeholder: 'player' + (lastPlayerNumber++)})
             rounds.value.forEach(round => round.scores.push(null))
-            console.log(players.value, rounds.value, playersTotal.value)
         }
 
         function deletePlayer(index: number) {
             players.value.splice(index, 1)
-            rounds.value.forEach(round => round.scores.splice(index, 1))
             playersTotal.value.splice(index, 1)
+            rounds.value.forEach(round => round.scores.splice(index, 1))
         }
 
         function deleteAllPlayers() {
             players.value = []
-            rounds.value.forEach(round => round.scores = [])
             playersTotal.value = []
+            rounds.value.forEach(round => round.scores = [])
         }
 
         return { players, rounds, playersTotal, addPlayer, deletePlayer, deleteAllPlayers }

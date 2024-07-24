@@ -55,7 +55,6 @@ onMounted(() => {
         }
     }
     state.autofocus = autofocus ? autofocus : { round: -1, score: -1 }
-    console.log("autofocus", state.autofocus)
 })
 
 
@@ -73,7 +72,7 @@ onMounted(() => {
                                     <v-btn variant="text" icon="mdi-account-plus" @click="scoreStore.addPlayer"></v-btn>
                                 </th>
                                 <th v-for="(_, playerIndex) in scoreStore.players" :key="playerIndex">
-                                    <v-text-field reverse variant="plain" v-model="scoreStore.players[playerIndex]">
+                                    <v-text-field reverse variant="plain" v-model="scoreStore.players[playerIndex].name" :placeholder="scoreStore.players[playerIndex].placeholder">
                                     </v-text-field>
                                 </th>
                             </tr>
@@ -81,8 +80,8 @@ onMounted(() => {
                         <tbody>
                             <tr v-for="(round, roundIndex) in scoreStore.rounds" :key="roundIndex">
                                 <td>{{ scoreStore.rounds.length > 1 ? round.round : ""  }}</td>
-                                <td v-for="(_, scoreIndex) in round.scores" :key="scoreIndex">
-                                    <v-text-field reverse class="text-right" density="compact" variant="plain" v-model.number="round.scores[scoreIndex]" :autofocus="roundIndex==state.autofocus.round  &&  scoreIndex==state.autofocus.score"></v-text-field>
+                                <td v-for="(score, scoreIndex) in round.scores" :key="scoreIndex">
+                                    <v-text-field reverse class="text-right" density="compact" :variant="typeof score === 'number' ? 'plain' : 'underlined'" placeholder="0" v-model.number="round.scores[scoreIndex]" :autofocus="roundIndex==state.autofocus.round  &&  scoreIndex==state.autofocus.score"></v-text-field>
                                 </td>
                             </tr>
                         </tbody>
