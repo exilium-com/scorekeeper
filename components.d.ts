@@ -7,8 +7,6 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    copy: typeof import('./src/components/ScoreKeeper copy.vue')['default']
-    HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ScoreKeeper: typeof import('./src/components/score-keeper.vue')['default']
