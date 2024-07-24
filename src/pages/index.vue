@@ -131,7 +131,7 @@ function addToHomeScreen()
 <template>
    <v-app-bar density="comfortable" title="Score Keeper">
       <v-btn :disabled="!isSharingSupported" @click="startShare" icon="mdi-share-variant"></v-btn>
-      <v-btn :disabled="!isSharingSupported" icon="mdi-home-plus-outline" @click="addToHomeScreen"></v-btn>
+      <v-btn :disabled="!isSharingSupported" icon="mdi-tray-arrow-down" @click="addToHomeScreen"></v-btn>
       <ScoreKeeperMenu/>
    </v-app-bar>
    <div ref="scoreHtmlRef">
