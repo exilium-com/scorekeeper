@@ -57,15 +57,39 @@ onMounted(() => {
     state.autofocus = autofocus ? autofocus : { round: -1, score: -1 }
 })
 
+function isRoundWinner(scoreIndex: number, roundIndex: number) {
+    if (scoreStore.rounds.length < 1) {
+        return false
+    }
+    if (scoreStore.rounds[roundIndex].scores.every(score => typeof score === 'number')) {
+        let maxScore = Math.max(...scoreStore.rounds[roundIndex].scores)
+        return scoreStore.rounds[roundIndex].scores[scoreIndex] === maxScore
+    }
+    else {
+        return false
+    }
+}
+
+
+function isWinner(playerIndex: number) {
+    if (scoreStore.rounds.length < 2) {
+        return false
+    }
+    if (scoreStore.playersTotal.every(score => typeof score === 'number')) {
+        let maxScore = Math.max(...scoreStore.playersTotal)
+        return scoreStore.playersTotal[playerIndex] === maxScore
+    }
+    else {
+        return false
+    }
+}
 
 </script>
 
 <template>
     <div class="fill-height">
         <v-responsive class="align-centerfill-height mx-auto" max-width="900">
-            <v-row>
-                <v-col cols="12">
-                    <v-table  fixed-header height="80vh" density="compact" class="ma-0 pa-0">
+                    <v-table  fixed-header height="80vh" density="compact" class="pa-0">
                         <thead>
                             <tr>
                                 <th class="text-center">
@@ -77,57 +101,87 @@ onMounted(() => {
                                 </th>
                             </tr>
                         </thead>
+
+
                         <tbody>
                             <tr v-for="(round, roundIndex) in scoreStore.rounds" :key="roundIndex">
-                                <td class="text-center" style="color:#5c8ea7 ;">{{ scoreStore.rounds.length > 1 ? round.round : ""  }}</td>
+                                <td class="text-center round-color">{{ scoreStore.rounds.length > 1 ? round.round : ""  }}</td>
                                 <td v-for="(score, scoreIndex) in round.scores" :key="scoreIndex">
-                                    <v-text-field class="text-right custom-text-field py-1" type="number" hide-details hide-spin-buttons reverse single-line density="compact" :variant="typeof score === 'number' ? 'plain' : 'underlined'" placeholder="0" v-model.number="round.scores[scoreIndex]" :autofocus="roundIndex==state.autofocus.round  &&  scoreIndex==state.autofocus.score"></v-text-field>
+                                    <v-text-field :class="'text-right custom-text-field py-1 ' + (isRoundWinner(scoreIndex, roundIndex) ? 'winner-color-text-field' : '')"
+                                                  type="number"
+                                                  hide-details hide-spin-buttons reverse single-line
+                                                  density="compact"
+                                                  :variant="typeof score === 'number' ? 'plain' : 'underlined'" placeholder="0"
+                                                  v-model.number="round.scores[scoreIndex]"
+                                                  :autofocus="roundIndex==state.autofocus.round  &&  scoreIndex==state.autofocus.score">
+                                        <template v-slot:prepend-inner>
+                                            <v-icon class="pb-2" color="success" v-if="isRoundWinner(scoreIndex, roundIndex)" size="small" icon="mdi-star"/>
+                                        </template>
+                                    </v-text-field>
                                 </td>
                             </tr>
                         </tbody>
+
+
                         <tfoot>
                             <tr>
                                 <td class="text-center"><v-avatar><v-icon icon="mdi-sigma"/></v-avatar></td>
-                                <td v-for="(total, index) in scoreStore.playersTotal" :key="index" class="text-right">
-                                    {{ total }}
+                                <td v-for="(_, index) in scoreStore.playersTotal" :key="index" class="text-right">
+                                    <v-text-field :class="'text-right custom-text-field py-1 ' + (isWinner(index) ? 'winner-color-text-field' : '')"
+                                                  type="number"
+                                                  hide-details hide-spin-buttons reverse single-line
+                                                  density="compact"
+                                                  variant="plain"
+                                                  v-model.number="scoreStore.playersTotal[index]"
+                                                  readonly>
+                                        <template v-slot:prepend-inner>
+                                            <v-icon class="pb-2" color="success" v-if="isWinner(index)" size="small" icon="mdi-star"/>
+                                        </template>
+                                    </v-text-field>
+
+
                                 </td>
+
                             </tr>
                         </tfoot>
                     </v-table>
-                </v-col>
-            </v-row>
         </v-responsive>
     </div>
 </template>
 
-<style scoped>
-thead,
-tfoot {
-    background-color: #2c5e77 !important;
-    color: #fff;
-}
 
+
+<style scoped>
 tbody {
-    background-color: #333;
+    background-color: rgb(var(--v-theme-background)) !important;
 }
 
 td {
-    border-width: 1px;
-    border-color: #2c5e77 !important;
-    border-right-style: solid;
+    border: none !important;
 }
 
 table > thead > tr > th, table > tfoot > tr > td
 {
-    padding: 0 4px !important;
-    background-color: #2c5e77 !important;
+    padding: 0 8px !important;
+    background-color: rgb(var(--v-theme-secondary)) !important;
     color: #fff;
 }
 
 table > tbody > tr > td {
-    padding: 0 4px !important;
+    padding: 0 8px !important;
 }
 
-.custom-text-field /deep/ .v-field__input { padding: 0; }
+.custom-text-field /deep/ .v-field__input {
+    padding: 0;
+    text-overflow: ellipsis;
+ }
+
+.winner-color-text-field /deep/ .v-field__input {
+    color: rgb(var(--v-theme-success)) !important;
+}
+
+.round-color {
+    color: gray !important;
+}
 
 </style>

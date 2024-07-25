@@ -12,7 +12,7 @@ export const useScoreStore = defineStore('score' + VERSION,
         let lastPlayerNumber = 1
 
         function addPlayer() {
-            players.value.push({name: '', placeholder: 'player' + (lastPlayerNumber++)})
+            players.value.push({name: '', placeholder: 'Player' + (lastPlayerNumber++)})
             rounds.value.forEach(round => round.scores.push(null))
         }
 
@@ -25,10 +25,17 @@ export const useScoreStore = defineStore('score' + VERSION,
         function deleteAllPlayers() {
             players.value = []
             playersTotal.value = []
-            rounds.value.forEach(round => round.scores = [])
+            rounds.value = []
+            addPlayer()
+            addPlayer()
         }
 
-        return { players, rounds, playersTotal, addPlayer, deletePlayer, deleteAllPlayers }
+        function restartScores() {
+            rounds.value = []
+            playersTotal.value = []
+        }
+
+        return { players, rounds, playersTotal, addPlayer, deletePlayer, deleteAllPlayers, restartScores }
     },
     {
         persist: true

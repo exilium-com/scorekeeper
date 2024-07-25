@@ -129,7 +129,10 @@ function addToHomeScreen()
 </script>
 
 <template>
-   <v-app-bar density="comfortable" title="Score Keeper">
+   <v-app-bar density="comfortable">
+      <template v-slot:title class="">
+          <span class="text-primary">Score Keeper</span>
+      </template>
       <v-btn :disabled="!isSharingSupported" @click="startShare" icon="mdi-share-variant"></v-btn>
       <v-btn :disabled="!isSharingSupported" icon="mdi-tray-arrow-down" @click="addToHomeScreen"></v-btn>
       <ScoreKeeperMenu/>

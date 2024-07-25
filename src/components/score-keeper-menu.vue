@@ -13,11 +13,9 @@ const scoreStore = useScoreStore()
     <v-menu activator="#menu-button">
         <v-list>
             <v-list-item @click="scoreStore.addPlayer">
-                <template v-slot:prepend>
-                    <v-icon icon="mdi-account"></v-icon>
-                </template>
+                Add Player
                 <template v-slot:append>
-                    <v-icon icon="mdi-plus"></v-icon>
+                    <v-icon icon="mdi-account-plus"></v-icon>
                 </template>
             </v-list-item>
 
@@ -25,20 +23,25 @@ const scoreStore = useScoreStore()
                 <v-divider></v-divider>
 
                 <v-list-item v-for="(player, playerIndex) in scoreStore.players" :key="playerIndex" @click="scoreStore.deletePlayer(playerIndex)">
-                    <v-list-item-title>{{ player.name ? player.name : player.placeholder }}</v-list-item-title>
+                    <v-list-item-title>{{ player.name ? 'Remove ' + player.name : 'Remove ' + player.placeholder }}</v-list-item-title>
                     <template v-slot:append>
-                        <v-icon icon="mdi-delete-outline"></v-icon>
+                        <v-icon icon="mdi-account-remove"></v-icon>
                     </template>
                 </v-list-item>
 
                 <v-divider></v-divider>
 
-                <v-list-item @click="scoreStore.deleteAllPlayers()">
-                    <template v-slot:prepend>
-                        <v-icon icon="mdi-account-multiple"></v-icon>
-                    </template>
+                <v-list-item @click="scoreStore.restartScores">
+                    Restart Scores
                     <template v-slot:append>
-                        <v-icon icon="mdi-delete-alert-outline" color="red"></v-icon>
+                        <v-icon icon="mdi-restart"></v-icon>
+                    </template>
+                </v-list-item>
+
+                <v-list-item @click="scoreStore.deleteAllPlayers()">
+                    Delete All Players
+                    <template v-slot:append>
+                        <v-icon icon="mdi-account-multiple-remove"></v-icon>
                     </template>
                 </v-list-item>
             </template>
