@@ -1,10 +1,15 @@
 <script setup lang="ts">
 
-import { useScoreStore } from '@/stores/score-store'
+import { isSharingSupported, addToHomeScreen } from '@/sharing'
 
+import { useScoreStore } from '@/stores/score-store'
 const scoreStore = useScoreStore()
 
 </script>
+
+
+<v-btn :disabled="!isSharingSupported" icon="mdi-tray-arrow-down" @click="addToHomeScreen"></v-btn>
+
 
 <template>
     <v-btn id="menu-button">
@@ -12,36 +17,19 @@ const scoreStore = useScoreStore()
     </v-btn>
     <v-menu activator="#menu-button">
         <v-list>
-            <v-list-item @click="scoreStore.addPlayer">
-                Add Player
+            <v-list-item :disabled="!isSharingSupported" @click="addToHomeScreen">
+                Add to Home Screen
                 <template v-slot:append>
-                    <v-icon icon="mdi-account-plus"></v-icon>
+                    <v-icon icon="mdi-tray-arrow-down"></v-icon>
                 </template>
             </v-list-item>
 
-            <template v-if="scoreStore.players.length > 0">
+            <template v-if="scoreStore.rounds.length > 1">
                 <v-divider></v-divider>
-
-                <v-list-item v-for="(player, playerIndex) in scoreStore.players" :key="playerIndex" @click="scoreStore.deletePlayer(playerIndex)">
-                    <v-list-item-title>{{ player.name ? 'Remove ' + player.name : 'Remove ' + player.placeholder }}</v-list-item-title>
-                    <template v-slot:append>
-                        <v-icon icon="mdi-account-remove"></v-icon>
-                    </template>
-                </v-list-item>
-
-                <v-divider></v-divider>
-
                 <v-list-item @click="scoreStore.restartScores">
-                    Restart Scores
+                    Reset Scores
                     <template v-slot:append>
                         <v-icon icon="mdi-restart"></v-icon>
-                    </template>
-                </v-list-item>
-
-                <v-list-item @click="scoreStore.deleteAllPlayers()">
-                    Delete All Players
-                    <template v-slot:append>
-                        <v-icon icon="mdi-account-multiple-remove"></v-icon>
                     </template>
                 </v-list-item>
             </template>

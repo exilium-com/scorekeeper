@@ -30,12 +30,17 @@ export const useScoreStore = defineStore('score' + VERSION,
             addPlayer()
         }
 
+        function deleteRound(index: number) {
+            rounds.value.splice(index, 1)
+            playersTotal.value = playersTotal.value.map((total, i) => total - rounds.value[index].scores[i])
+        }
+
         function restartScores() {
             rounds.value = []
             playersTotal.value = []
         }
 
-        return { players, rounds, playersTotal, addPlayer, deletePlayer, deleteAllPlayers, restartScores }
+        return { players, rounds, playersTotal, addPlayer, deletePlayer, deleteAllPlayers, restartScores, deleteRound }
     },
     {
         persist: true
