@@ -39,40 +39,50 @@ function dataURLtoFile(dataurl: string, filename: string)
   return new File([u8array], filename, { type: mimeType });
 };
 
-function updateSharingScreenshot(scoreHtmlRef: any)
+async function updateSharingScreenshot(elementId: string)
 {
-  console.log('updateSharingScreenshot')
-  htmlToImage.toPng(scoreHtmlRef.value)
-    .then(function (dataUrl: string)
-    {
-      sharingOptions.value.files = [dataURLtoFile(dataUrl, 'scorekeeper.png')];
-      console.log('updateSharingScreenshot done')
-    })
-    .catch(function (error: any)
-    {
-      console.error('updateSharingScreenshot error:', error);
-    });
+    var node = document.getElementById('scoreKeeperId');
+    if (!node) {
+        console.error('updateSharingScreenshot: node not found')
+        return
+    }
+    console.log('updateSharingScreenshot')
+    const dataUrl = await htmlToImage.toPng(node, { height: 300, canvasHeight:300, pixelRatio: 0.5 })
+    sharingOptions.value.files.push(dataURLtoFile(dataUrl, 'scorekeeper.png'));
+    console.log('updateSharingScreenshot done')
+}
+
+function isRoundEmpty(roundIndex: number) {
+    return scoreStore.rounds[roundIndex].scores.every(score => typeof score !== 'number')
 }
 
 function updateSharingText()
 {
-  console.log('updateSharingText')
+  const filledRounds = scoreStore.rounds.filter((_, roundIndex: number) => !isRoundEmpty(roundIndex))
 
   // scoreStore.players has the player names and scoreStore.rounds has the array of rounds with the scores
   // for each player, we print the name, then the score for each round separated by +, then the total score
   const text = scoreStore.players.map((player: Player, playerIndex: number) =>
   {
     const playerTotal = scoreStore.rounds.reduce((total: number, round: Round) => total + (round.scores[playerIndex] || 0), 0)
-    return `${player.name || player.placeholder}: ${scoreStore.rounds.map((round: Round) => round.scores[playerIndex] || 0).join(' + ')} = ${playerTotal}`
+    return `${player.name || player.placeholder}: ${filledRounds.length === 1 ? '' : filledRounds.map((round: Round, roundIndex: number) => round.scores[playerIndex] || 0).join(' + ') + ' ='} ${playerTotal}`
   }).join('\n')
 
   sharingOptions.value.text = text + '\n'
-  console.log('updateSharingText done')
+}
+
+function getPlayerScoresHtml(round: Round) {
+    return scoreStore.players.map((player: Player, playerIndex: number) => `<td>${round.scores[playerIndex] || 0}</td>`).join('')
 }
 
 function updateSharingHtml()
 {
   console.log('updateSharingHtml')
+  let playerHeader = `<tr><th><b> Rounds\\Players </b></th>` + scoreStore.players.map((player: Player, playerIndex: number) => `<th>${player.name || player.placeholder}</th>`).join('') + '</tr>'
+  let filledRounds = scoreStore.rounds.filter((_, roundIndex: number) => !isRoundEmpty(roundIndex))
+  let playerScores = filledRounds.map((round: Round, roundIndex: number) => `<tr><td><b>Round ${roundIndex + 1}</b></td> ${getPlayerScoresHtml(round)} </tr>`).join('')
+  let playerTotals = '<tr><td><b> Totals </b></td>' + scoreStore.players.map((player: Player, playerIndex: number) => `<td>${scoreStore.rounds.reduce((total: number, round: Round) => total + (round.scores[playerIndex] || 0), 0)}</td>`).join('') + '</tr>'
+
   // we export this as a simple html table with the player names and totals bolded and the scores in a table
   const html = `
   <html>
@@ -91,32 +101,26 @@ function updateSharingHtml()
   </head>
   <body>
   <table>
-  <tr>
-  <th>Player</th>
-  ${scoreStore.rounds.map((round: Round, roundIndex: number) => `<th>Round ${roundIndex + 1}</th>`).join('')}
-  <th>Total</th>
-  </tr>
-  ${scoreStore.players.map((player: Player, playerIndex: number) => `<tr><td><b>${player.name || player.placeholder}</b></td>${scoreStore.rounds.map((round: Round) => `<td>${round.scores[playerIndex] || 0}</td>`).join('')}<td><b>${scoreStore.rounds.reduce((total: number, round: Round) => total + (round.scores[playerIndex] || 0), 0)}</b></td></tr>`).join('')}
+    ${playerHeader}
+    ${playerScores}
+    ${playerTotals}
   </table>
   </body>
   </html>
   `
-
-  sharingOptions.value.files = [dataURLtoFile(`data:text/html;base64,${btoa(html)}`, 'scorekeeper.html')];
-
+  sharingOptions.value.files.push(dataURLtoFile(`data:text/html;base64,${btoa(html)}`, 'scorekeeper.html'));
   console.log('updateSharingHtml done')
 }
 
-export function startShare(scoreHtmlRef: any)
+
+
+export async function startShare(elementId: string)
 {
+  sharingOptions.value.files = []
   console.log('startShare')
   updateSharingText()
   updateSharingHtml()
-  try {
-    updateSharingScreenshot(scoreHtmlRef)
-  } catch (error) {
-    // ignore error
-  }
+  await updateSharingScreenshot(elementId)
   share().catch(err => err)
   console.log('startShare done')
 }
