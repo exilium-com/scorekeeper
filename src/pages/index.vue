@@ -7,7 +7,7 @@ import { isSharingSupported, startShare } from '@/sharing'
 <template>
     <v-app-bar density="comfortable">
         <template v-slot:title class="">
-            <span class="text-primary">Score Keeper</span>
+            <span class="text-primary font-weight-bold">Score Keeper</span>
         </template>
         <v-btn :disabled="!isSharingSupported" @click="startShare('scoreKeeperId')" icon="mdi-share-variant"></v-btn>
         <ScoreKeeperMenu />
