@@ -13,7 +13,7 @@ let sharingOptions = ref({
     title: 'Score Keeper',
     text: 'Current Scores',
     url: isClient ? location.href : '',
-    files: [] as File[],
+//    files: [] as File[],
 })
 
 export const { share, isSupported: isSharingSupported } = useShare(sharingOptions)
@@ -116,11 +116,12 @@ function updateSharingHtml()
 
 export async function startShare(elementId: string)
 {
-  sharingOptions.value.files = []
   console.log('startShare')
+  sharingOptions.value.url = isClient ? location.href : ''
   updateSharingText()
-  updateSharingHtml()
-  await updateSharingScreenshot(elementId)
+  //sharingOptions.value.files = []
+  //updateSharingHtml()
+  //await updateSharingScreenshot(elementId)
   share().catch(err => err)
   console.log('startShare done')
 }
