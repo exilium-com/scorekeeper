@@ -16,8 +16,8 @@ export const useScoreStore = defineStore('score' + VERSION,
         const rounds = ref<Round[]>([])
         const playersTotal = ref<number[]>([])
         let lastPlayerNumber = 1
-        let gameHistory = ref<{ date: Date, name: string, encodedScores: string }[]>([{date: new Date(), name: 'new game', encodedScores: ''}])
-        let curGame = ref(0)
+        const gameHistory = ref<{ date: Date, name: string, encodedScores: string }[]>([{date: new Date(), name: 'new game', encodedScores: ''}])
+        const curGame = ref(0)
 
         function encodeScores() {
             // encode into json
@@ -68,7 +68,7 @@ export const useScoreStore = defineStore('score' + VERSION,
 
         function saveCurrentGame() {
             console.log('saveCurrentGame - curGame = ', curGame.value)
-            let gameName =  players.value.map(player => player.name ? player.name : player.placeholder).join(' vs ')
+            const gameName =  players.value.map(player => player.name ? player.name : player.placeholder).join(' vs ')
             gameHistory.value[curGame.value].name = gameName
             encodeScores()
         }

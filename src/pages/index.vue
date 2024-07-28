@@ -27,7 +27,7 @@ onBeforeMount(() => {
 
 <template>
     <v-app-bar density="comfortable">
-        <template v-slot:title class="">
+        <template v-slot:title>
             <span class="text-primary font-weight-bold">Score Keeper</span>
         </template>
         <v-btn :disabled="!isSharingSupported" @click="startShare('scoreKeeperId')" icon="mdi-share-variant"></v-btn>
