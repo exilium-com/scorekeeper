@@ -22,8 +22,8 @@ export const useScoreStore = defineStore('score' + VERSION,
         function encodeScores() {
             // encode into json
             const scores: ShareableScore = { p: [], r: [] }
-            players.value.forEach(player => scores.p.push(player.name))
-            rounds.value.forEach(round => scores.r.push(round.scores))
+            players.value.forEach((player: Player) => scores.p.push(player.name))
+            rounds.value.forEach((round: Round) => scores.r.push(round.scores))
             const json = JSON.stringify(scores)
             // console.log(json.length, btoa(json).length, compressToEncodedURIComponent(json).length)
             gameHistory.value[curGame.value].encodedScores = compressToEncodedURIComponent(json)
@@ -68,7 +68,7 @@ export const useScoreStore = defineStore('score' + VERSION,
 
         function saveCurrentGame() {
             console.log('saveCurrentGame - curGame = ', curGame.value)
-            const gameName =  players.value.map(player => player.name ? player.name : player.placeholder).join(' vs ')
+            const gameName =  players.value.map((player: Player) => player.name ? player.name : player.placeholder).join(' vs ')
             gameHistory.value[curGame.value].name = gameName
             encodeScores()
         }
