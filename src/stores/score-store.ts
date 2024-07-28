@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia'
 import { Round, Player } from '@/types/player'
-import { ref, Ref } from 'vue'
+import { ref } from 'vue'
+import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from 'lz-string'
 
-const VERSION = '0.11'
+const VERSION = '0.12'
 
 interface ShareableScore {
     p: string[]     // player names
@@ -11,20 +12,21 @@ interface ShareableScore {
 
 export const useScoreStore = defineStore('score' + VERSION,
     () => {
-        let players = ref<Player[]>([])
-        let rounds = ref<Round[]>([])
-        let playersTotal = ref<number[]>([])
+        const players = ref<Player[]>([])
+        const rounds = ref<Round[]>([])
+        const playersTotal = ref<number[]>([])
         let lastPlayerNumber = 1
         let gameHistory = ref<{ date: Date, name: string, encodedScores: string }[]>([{date: new Date(), name: 'new game', encodedScores: ''}])
         let curGame = ref(0)
 
-
         function encodeScores() {
             // encode into json
-            let scores: ShareableScore = { p: [], r: [] }
+            const scores: ShareableScore = { p: [], r: [] }
             players.value.forEach(player => scores.p.push(player.name))
             rounds.value.forEach(round => scores.r.push(round.scores))
-            gameHistory.value[curGame.value].encodedScores = btoa(JSON.stringify(scores))
+            const json = JSON.stringify(scores)
+            // console.log(json.length, btoa(json).length, compressToEncodedURIComponent(json).length)
+            gameHistory.value[curGame.value].encodedScores = compressToEncodedURIComponent(json)
         }
 
         function currentEncodedScores() : string {
@@ -33,7 +35,7 @@ export const useScoreStore = defineStore('score' + VERSION,
 
         function decodeScores(scores: string) {
             // decode from json
-            let data = JSON.parse(atob(scores))
+            const data = JSON.parse(decompressFromEncodedURIComponent(scores))
             players.value = data.p.map((name: string, i: number) => { return { name: name, placeholder: 'Player' + (i + 1) } })
             rounds.value = data.r.map((scores: number[], roundIndex: number) => { return { round: roundIndex, scores: scores } })
             playersTotal.value = players.value.map((_, i) => rounds.value.reduce((total, round) => total + round.scores[i], 0))
