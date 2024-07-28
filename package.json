@@ -15,6 +15,7 @@
     "html-to-image": "^1.11.11",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
+    "relative-time-vue-component": "^5.0.2",
     "roboto-fontface": "*",
     "vue": "^3.4.31",
     "vuetify": "^3.6.11"

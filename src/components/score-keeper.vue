@@ -85,10 +85,6 @@ function isWinner(playerIndex: number) {
     }
 }
 
-function isRoundEmpty(roundIndex: number) {
-    return scoreStore.rounds[roundIndex].scores.every(score => typeof score !== 'number')
-}
-
 let firstColumnStyle = computed(() => state.editPlayers ? 'width: 120px;' : 'width: 60px;')
 
 </script>
@@ -119,7 +115,7 @@ let firstColumnStyle = computed(() => state.editPlayers ? 'width: 120px;' : 'wid
         <tbody>
             <tr v-for="(round, roundIndex) in scoreStore.rounds" :key="roundIndex">
                 <td class="text-left round-color" style="text-indent: 1em">{{ scoreStore.rounds.length > 1 ? roundIndex + 1 : "" }}
-                    <v-icon v-if="state.editPlayers && !isRoundEmpty(roundIndex)" icon="mdi-trash-can-outline" size="small" color="primary-darken-1"
+                    <v-icon v-if="state.editPlayers && !scoreStore.isRoundEmpty(roundIndex)" icon="mdi-trash-can-outline" size="small" color="primary-darken-1"
                         @click="scoreStore.deleteRound(roundIndex)" />
                 </td>
                 <td v-for="(score, scoreIndex) in round.scores" :key="scoreIndex">

@@ -52,13 +52,9 @@ async function updateSharingScreenshot(elementId: string)
     console.log('updateSharingScreenshot done')
 }
 
-function isRoundEmpty(roundIndex: number) {
-    return scoreStore.rounds[roundIndex].scores.every(score => typeof score !== 'number')
-}
-
 function updateSharingText()
 {
-  const filledRounds = scoreStore.rounds.filter((_, roundIndex: number) => !isRoundEmpty(roundIndex))
+  const filledRounds = scoreStore.rounds.filter((_, roundIndex: number) => !scoreStore.isRoundEmpty(roundIndex))
 
   // scoreStore.players has the player names and scoreStore.rounds has the array of rounds with the scores
   // for each player, we print the name, then the score for each round separated by +, then the total score
@@ -79,7 +75,7 @@ function updateSharingHtml()
 {
   console.log('updateSharingHtml')
   let playerHeader = `<tr><th><b> Rounds\\Players </b></th>` + scoreStore.players.map((player: Player, playerIndex: number) => `<th>${player.name || player.placeholder}</th>`).join('') + '</tr>'
-  let filledRounds = scoreStore.rounds.filter((_, roundIndex: number) => !isRoundEmpty(roundIndex))
+  let filledRounds = scoreStore.rounds.filter((_, roundIndex: number) => !scoreStore.isRoundEmpty(roundIndex))
   let playerScores = filledRounds.map((round: Round, roundIndex: number) => `<tr><td><b>Round ${roundIndex + 1}</b></td> ${getPlayerScoresHtml(round)} </tr>`).join('')
   let playerTotals = '<tr><td><b> Totals </b></td>' + scoreStore.players.map((player: Player, playerIndex: number) => `<td>${scoreStore.rounds.reduce((total: number, round: Round) => total + (round.scores[playerIndex] || 0), 0)}</td>`).join('') + '</tr>'
 

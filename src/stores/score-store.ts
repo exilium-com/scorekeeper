@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import { Round, Player } from '@/types/player'
-import { ref } from 'vue'
+import { ref, Ref } from 'vue'
 
-const VERSION = '0.1'
+const VERSION = '0.11'
 
 interface ShareableScore {
     p: string[]     // player names
@@ -15,13 +15,20 @@ export const useScoreStore = defineStore('score' + VERSION,
         let rounds = ref<Round[]>([])
         let playersTotal = ref<number[]>([])
         let lastPlayerNumber = 1
+        let gameHistory = ref<{ date: Date, name: string, encodedScores: string }[]>([{date: new Date(), name: 'new game', encodedScores: ''}])
+        let curGame = ref(0)
 
-        function encodeScores() : string {
+
+        function encodeScores() {
             // encode into json
             let scores: ShareableScore = { p: [], r: [] }
             players.value.forEach(player => scores.p.push(player.name))
             rounds.value.forEach(round => scores.r.push(round.scores))
-            return btoa(JSON.stringify(scores))
+            gameHistory.value[curGame.value].encodedScores = btoa(JSON.stringify(scores))
+        }
+
+        function currentEncodedScores() : string {
+            return gameHistory.value[curGame.value].encodedScores
         }
 
         function decodeScores(scores: string) {
@@ -57,12 +64,33 @@ export const useScoreStore = defineStore('score' + VERSION,
             playersTotal.value = playersTotal.value.map((total, i) => total - rounds.value[index].scores[i])
         }
 
-        function restartScores() {
-            rounds.value = []
-            playersTotal.value = []
+        function saveCurrentGame() {
+            console.log('saveCurrentGame - curGame = ', curGame.value)
+            let gameName =  players.value.map(player => player.name ? player.name : player.placeholder).join(' vs ')
+            gameHistory.value[curGame.value].name = gameName
+            encodeScores()
         }
 
-        return { players, rounds, playersTotal, addPlayer, deletePlayer, deleteAllPlayers, restartScores, deleteRound, encodeScores, decodeScores }
+        function isRoundEmpty(roundIndex: number) {
+            return rounds.value[roundIndex].scores.every(score => typeof score !== 'number')
+        }
+
+        function newGame() {
+            saveCurrentGame()
+            rounds.value = []
+            playersTotal.value = []
+            curGame.value = gameHistory.value.length
+            gameHistory.value.push({ date: new Date(), name: "Game" + curGame.value, encodedScores: "" })
+        }
+
+        function changeGame(index: number) {
+            saveCurrentGame()
+            console.log("changeGame - from = ", curGame.value, " to =", index, " length=", gameHistory.value.length)
+            curGame.value = index
+            decodeScores(gameHistory.value[curGame.value].encodedScores)
+        }
+
+        return { players, rounds, playersTotal, curGame, addPlayer, deletePlayer, deleteAllPlayers, newGame, deleteRound, encodeScores, decodeScores, changeGame, gameHistory, currentEncodedScores, isRoundEmpty }
     },
     {
         persist: true

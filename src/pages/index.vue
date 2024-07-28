@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { isSharingSupported, startShare } from '@/sharing'
-import { watch, reactive, onBeforeMount } from 'vue';
+import { watch, onBeforeMount } from 'vue';
 import { useScoreStore } from '@/stores/score-store'
 import { useRoute, useRouter } from 'vue-router';
 
@@ -8,21 +8,17 @@ const scoreStore = useScoreStore()
 const route = useRoute()
 const router = useRouter()
 
-const state = reactive({
-    encodedScores: ''
-})
-
 
 watch(() => [scoreStore.players, scoreStore.rounds], () => {
-    state.encodedScores = scoreStore.encodeScores()
-    router.replace({ query: { scores: state.encodedScores } })
+    scoreStore.encodeScores()
+    router.replace({ query: { scores: scoreStore.currentEncodedScores() } })
     },
     { deep: true }
 )
 
 onBeforeMount(() => {
-    if (route.query.scores &&  route.query.scores !== state.encodedScores) {
-        console.log('onBeforeRouteUpdate', route.query.scores)
+    if (route.query.scores &&  route.query.scores !== scoreStore.currentEncodedScores()) {
+        scoreStore.newGame()
         scoreStore.decodeScores(route.query.scores as string)
     }
 })
