@@ -13,6 +13,7 @@
     "@vueuse/core": "^10.11.0",
     "core-js": "^3.37.1",
     "html-to-image": "^1.11.11",
+    "lz-string": "^1.5.0",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
     "roboto-fontface": "*",
