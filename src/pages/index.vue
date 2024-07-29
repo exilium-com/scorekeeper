@@ -26,6 +26,12 @@ onBeforeMount(() =>
    }
 })
 
+function maxWidth()
+{
+    const width = scoreStore.players.length * 240
+    return width < 900 ? width : 900
+}
+
 </script>
 
 <template>
@@ -37,7 +43,7 @@ onBeforeMount(() =>
    <ScoreKeeperMenu />
 </v-app-bar>
 <div class="fill-height">
-   <v-responsive class="align-centerfill-height mx-auto" max-width="900">
+   <v-responsive class="align-centerfill-height mx-auto" :max-width="maxWidth()">
       <div id="scoreKeeperId">
          <ScoreKeeper />
       </div>
