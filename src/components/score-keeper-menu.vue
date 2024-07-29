@@ -58,9 +58,9 @@ function isCurrentGame(gameIndex: number)
                 <v-list-item-title>Score Keeper</v-list-item-title>
                 <v-list-item-subtitle>v1.0.0 by <a href="https://exilium.com">exilium</a></v-list-item-subtitle>
             </v-list-item>
-            <v-list-item>
+            <v-list-item max-width="350">
                 Keep scores for any games, privately. Nothing is sent to any
-                server on the cloud unless you explicitly share scores with
+                server in the cloud unless you explicitly share scores with
                 someone. Also works offline (use the menu to add Score
                 Keeper to your homescreen).
             </v-list-item>
