@@ -19,6 +19,7 @@ export const useScoreStore = defineStore('score' + VERSION,
         let lastPlayerNumber = 1
         const gameHistory = ref<{ date: Date, name: string, encodedScores: string }[]>([{date: new Date(), name: 'new game', encodedScores: ''}])
         const curGame = ref(0)
+        const theme = ref('dark')
 
         function encodeScores() {
             // encode into json
@@ -93,7 +94,7 @@ export const useScoreStore = defineStore('score' + VERSION,
             decodeScores(gameHistory.value[curGame.value].encodedScores)
         }
 
-        return { players, rounds, playersTotal, curGame, addPlayer, deletePlayer, deleteAllPlayers, newGame, deleteRound, encodeScores, decodeScores, changeGame, gameHistory, currentEncodedScores, isRoundEmpty }
+        return { players, rounds, playersTotal, curGame, addPlayer, deletePlayer, deleteAllPlayers, newGame, deleteRound, encodeScores, decodeScores, changeGame, gameHistory, currentEncodedScores, isRoundEmpty, theme }
     },
     {
         persist: true

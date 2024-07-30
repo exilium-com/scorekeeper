@@ -7,9 +7,13 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AboutDialog: typeof import('./src/components/about-dialog.vue')['default']
+    copy: typeof import('./src/components/theme-switch copy.vue')['default']
+    GameHistory: typeof import('./src/components/game-history.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ScoreKeeper: typeof import('./src/components/score-keeper.vue')['default']
     ScoreKeeperMenu: typeof import('./src/components/score-keeper-menu.vue')['default']
+    ThemeSwitch: typeof import('./src/components/theme-switch.vue')['default']
   }
 }

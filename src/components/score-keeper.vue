@@ -141,7 +141,7 @@ let firstColumnStyle = computed(() => state.editPlayers ? 'width: 120px;' : 'wid
 
         <tfoot>
             <tr>
-                <td :style="firstColumnStyle" class="text-left"><v-avatar><v-icon icon="mdi-sigma" /></v-avatar></td>
+                <td :style="firstColumnStyle" class="text-left"><v-avatar><v-icon icon="mdi-sigma" color="light"/></v-avatar></td>
                 <td v-for="(_, index) in scoreStore.playersTotal" :key="index" class="text-right">
                     <v-text-field :class="'text-right custom-text-field py-1 ' + (isWinner(index) ? 'winner-color-text-field' : '')" type="number" hide-details hide-spin-buttons
                         reverse single-line density="compact" variant="plain" v-model.number="scoreStore.playersTotal[index]" readonly>
