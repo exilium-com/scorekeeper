@@ -5,7 +5,7 @@ import { useShare } from '@vueuse/core'
 import { useScoreStore } from '@/stores/score-store'
 import * as htmlToImage from 'html-to-image';
 import { type Round, type Player } from '@/types/player'
-
+import { sendAnalyticsEvent } from '@/analytics';
 
 const scoreStore = useScoreStore()
 
@@ -112,6 +112,7 @@ function updateSharingHtml()
 
 export async function startShare(elementId: string)
 {
+  sendAnalyticsEvent('share_game')
   console.log('startShare')
   sharingOptions.value.url = isClient ? location.href : ''
   updateSharingText()
@@ -124,6 +125,7 @@ export async function startShare(elementId: string)
 
 export function addToHomeScreen()
 {
+  sendAnalyticsEvent('add_to_home_screen')
   addToHomeScreenInstance.show()  // show "add-to-homescreen" instructions to user, or do nothing if already added to homescreen
   // The only argument is the language to show the messages in (currently only 'de', 'en', 'pt' and 'fr' are available).
 }

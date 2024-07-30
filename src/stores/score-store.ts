@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { Round, Player } from '@/types/player'
 import { ref } from 'vue'
 import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from 'lz-string'
+import { sendAnalyticsEvent } from '@/analytics'
 
 const VERSION = '0.12'
 
@@ -78,6 +79,7 @@ export const useScoreStore = defineStore('score' + VERSION,
         }
 
         function newGame() {
+            sendAnalyticsEvent('new_game')
             saveCurrentGame()
             rounds.value = []
             playersTotal.value = []
