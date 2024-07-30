@@ -68,7 +68,6 @@ export const useScoreStore = defineStore('score' + VERSION,
         }
 
         function saveCurrentGame() {
-            console.log('saveCurrentGame - curGame = ', curGame.value)
             const gameName =  players.value.map((player: Player) => player.name ? player.name : player.placeholder).join(' vs ')
             gameHistory.value[curGame.value].name = gameName
             encodeScores()
@@ -88,8 +87,8 @@ export const useScoreStore = defineStore('score' + VERSION,
         }
 
         function changeGame(index: number) {
+            sendAnalyticsEvent('change_game')
             saveCurrentGame()
-            console.log("changeGame - from = ", curGame.value, " to =", index, " length=", gameHistory.value.length)
             curGame.value = index
             decodeScores(gameHistory.value[curGame.value].encodedScores)
         }

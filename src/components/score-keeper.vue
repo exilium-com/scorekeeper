@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { reactive, watch, onBeforeMount, onMounted, computed } from 'vue';
 import { useScoreStore } from '@/stores/score-store'
+import { sendAnalyticsEvent } from '@/analytics'
 
 const scoreStore = useScoreStore()
 
@@ -85,6 +86,13 @@ function isWinner(playerIndex: number) {
     }
 }
 
+function editGame() {
+    state.editPlayers = !state.editPlayers
+    if (state.editPlayers) {
+        sendAnalyticsEvent('edit_game')
+    }
+}
+
 let firstColumnStyle = computed(() => state.editPlayers ? 'width: 120px;' : 'width: 60px;')
 
 </script>
@@ -94,7 +102,7 @@ let firstColumnStyle = computed(() => state.editPlayers ? 'width: 120px;' : 'wid
         <thead>
             <tr>
                 <th :style="firstColumnStyle" class="text-left">
-                    <v-btn :variant="state.editPlayers ? 'tonal' : 'plain'" icon="mdi-pencil" @click="state.editPlayers = !state.editPlayers" :active="state.editPlayers"></v-btn>
+                    <v-btn :variant="state.editPlayers ? 'tonal' : 'plain'" icon="mdi-pencil" @click="editGame()" :active="state.editPlayers"></v-btn>
                     <v-btn v-if="state.editPlayers" variant="text" icon="mdi-account-plus-outline" @click="scoreStore.addPlayer"></v-btn>
                 </th>
                 <th v-for="(_, playerIndex) in scoreStore.players" :key="playerIndex">
