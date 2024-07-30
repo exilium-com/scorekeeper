@@ -8,6 +8,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "Vue chrome",
+            //"skipFiles": ["${workspaceFolder}/node_modules/**/*.js", "${workspaceFolder}/frontend/node_modules/**/*.js"],
             "preLaunchTask": "npm: dev",
             "url": "http://localhost:3000",
             "webRoot": "${workspaceFolder}/src"

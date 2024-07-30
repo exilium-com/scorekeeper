@@ -112,14 +112,19 @@ function updateSharingHtml()
 
 export async function startShare(elementId: string)
 {
-  sendAnalyticsEvent('share_game')
   console.log('startShare')
   sharingOptions.value.url = isClient ? location.href : ''
   updateSharingText()
   //sharingOptions.value.files = []
   //updateSharingHtml()
   //await updateSharingScreenshot(elementId)
-  share().catch(err => err)
+
+  try {
+    await share()
+    sendAnalyticsEvent('share_game')
+  } catch (err) {
+    console.error('share error ', err)
+  }
   console.log('startShare done')
 }
 

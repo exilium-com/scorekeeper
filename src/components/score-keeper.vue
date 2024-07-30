@@ -128,7 +128,7 @@ let firstColumnStyle = computed(() => state.editPlayers ? 'width: 120px;' : 'wid
                 </td>
                 <td v-for="(score, scoreIndex) in round.scores" :key="scoreIndex">
                     <v-text-field :class="'text-right custom-text-field py-1 ' + (isRoundWinner(scoreIndex, roundIndex) ? 'winner-color-text-field' : '')" type="number"
-                        hide-details hide-spin-buttons reverse single-line density="compact" :variant="typeof score === 'number' ? 'plain' : 'underlined'" placeholder="0"
+                        hide-details hide-spin-buttons reverse single-line density="compact" :variant="typeof score === 'number' ? 'plain' : 'underlined'" placeholder="—"
                         v-model.number="round.scores[scoreIndex]" :autofocus="roundIndex == state.autofocus.round && scoreIndex == state.autofocus.score">
                         <template v-slot:prepend-inner>
                             <v-icon class="pb-2" color="success" v-if="isRoundWinner(scoreIndex, roundIndex)" size="small" icon="mdi-star" />
