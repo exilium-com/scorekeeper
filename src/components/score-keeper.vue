@@ -107,7 +107,7 @@ let firstColumnStyle = computed(() => state.editPlayers ? 'width: 120px;' : 'wid
                 </th>
                 <th v-for="(_, playerIndex) in scoreStore.players" :key="playerIndex">
                     <v-text-field class="custom-text-field py-1" hide-details hide-spin-buttons reverse :variant="state.editPlayers ? 'underlined' : 'plain'"
-                        :readonly="!state.editPlayers" v-model="scoreStore.players[playerIndex].name" :placeholder="scoreStore.players[playerIndex].placeholder">
+                         v-model="scoreStore.players[playerIndex].name" :placeholder="scoreStore.players[playerIndex].placeholder">
                         <template v-slot:append-inner v-if="state.editPlayers">
                             <v-icon icon="mdi-trash-can-outline" size="small" color="primary" @click="scoreStore.deletePlayer(playerIndex)" />
                         </template>
