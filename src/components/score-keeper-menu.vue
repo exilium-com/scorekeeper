@@ -5,7 +5,8 @@ import { useScoreStore } from '@/stores/score-store'
 import ThemeSwitch from '@/components/theme-switch.vue'
 import { watch, reactive } from 'vue'
 
-const recentGameMax = 3
+const maxRecentGames = 3
+const maxGames = 10
 const scoreStore = useScoreStore()
 
 let state = reactive({
@@ -13,7 +14,7 @@ let state = reactive({
 })
 
 function isCurGameRecent() {
-    return scoreStore.curGame >= scoreStore.gameHistory.length - recentGameMax
+    return scoreStore.curGame >= scoreStore.gameHistory.length - maxRecentGames
 }
 
 watch(() => scoreStore.curGame, () => {
@@ -44,14 +45,14 @@ watch(() => scoreStore.curGame, () => {
                 <v-list-item v-bind="props" title="Games">
                 </v-list-item>
             </template>
-        <GameHistory :start="-recentGameMax" />
+        <GameHistory :start="-maxRecentGames" />
 
         <v-list-group value="More">
             <template v-slot:activator="{props}">
                 <v-list-item v-bind="props" title="More...">
                 </v-list-item>
             </template>
-            <GameHistory :end="-recentGameMax" />
+            <GameHistory :start="-maxGames" :end="-maxRecentGames" />
         </v-list-group>
         </v-list-group>
         <v-divider></v-divider>
