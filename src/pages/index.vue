@@ -3,6 +3,8 @@ import { isSharingSupported, startShare } from '@/sharing'
 import { watch, onBeforeMount } from 'vue';
 import { useScoreStore } from '@/stores/score-store'
 import { useRoute, useRouter } from 'vue-router';
+import { isEditing } from '@/edit-mode';
+import { sendAnalyticsEvent } from '@/analytics';
 
 const scoreStore = useScoreStore()
 const route = useRoute()
@@ -32,6 +34,14 @@ function maxWidth()
     return width < 900 ? width : 900
 }
 
+function switchEditMode()
+{
+    isEditing.value = !isEditing.value
+    if (isEditing.value) {
+        sendAnalyticsEvent('edit_game')
+    }
+}
+
 </script>
 
 <template>
@@ -39,6 +49,7 @@ function maxWidth()
    <template v-slot:title>
       <span class="text-primary font-weight-bold">Score Keeper</span>
    </template>
+   <v-btn :variant="isEditing ? 'tonal' : 'plain'" icon="mdi-pencil" @click="switchEditMode()" :active="isEditing" :color="isEditing ? 'primary' : undefined"></v-btn>
    <v-btn :disabled="!isSharingSupported" @click="startShare('scoreKeeperId')" icon="mdi-share-variant"></v-btn>
    <ScoreKeeperMenu />
 </v-app-bar>
