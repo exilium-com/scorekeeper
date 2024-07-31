@@ -183,6 +183,7 @@ table>tbody>tr>td {
 .custom-text-field /deep/ .v-field__input {
     padding: 0;
     text-overflow: ellipsis;
+    font-weight: 500;
 }
 
 .custom-text-field /deep/ .v-field__append-inner {

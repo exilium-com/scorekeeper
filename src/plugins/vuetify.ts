@@ -33,7 +33,7 @@ const customLightTheme: ThemeDefinition = {
         background: '#FFFFFF',
         info: '#0099A7',
         error: '#DC4C64',
-        success: '#E25D1F',
+        success: '#FF6923',
         dark: '#162C49',
         light: '#D1E5F1',
     }
