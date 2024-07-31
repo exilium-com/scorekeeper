@@ -47,7 +47,7 @@ watch(() => scoreStore.curGame, () => {
             </template>
         <GameHistory :start="-maxRecentGames" />
 
-        <v-list-group value="More">
+        <v-list-group v-if="scoreStore.gameHistory.length > maxRecentGames" value="More">
             <template v-slot:activator="{props}">
                 <v-list-item v-bind="props" title="More...">
                 </v-list-item>
