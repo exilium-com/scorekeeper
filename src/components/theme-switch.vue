@@ -8,8 +8,8 @@ const scoreStore = useScoreStore()
 const theme = useTheme()
 
 const currentTheme = computed(() => theme.global.name.value === 'customDarkTheme'
-    ? {icon: 'mdi-weather-night', text: 'Go Light'}
-    : {icon: 'mdi-weather-sunny', text: 'Go Dark'}
+    ? {icon: 'mdi-weather-sunny', text: 'Light Theme'}
+    : {icon: 'mdi-weather-night', text: 'Dark Theme'}
   )
 
 function toggleTheme() {

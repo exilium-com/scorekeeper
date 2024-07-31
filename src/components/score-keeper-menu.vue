@@ -26,7 +26,6 @@ watch(() => scoreStore.curGame, () => {
 </script>
 
 <template>
-<v-btn :disabled="!isSharingSupported" icon="mdi-tray-arrow-down" @click="addToHomeScreen"></v-btn>
 
 <v-btn id="menu-button">
     <v-icon>mdi-menu</v-icon>
