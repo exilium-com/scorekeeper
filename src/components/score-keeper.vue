@@ -88,15 +88,19 @@ function isWinner(playerIndex: number) {
 </script>
 
 <template>
-    <v-table fixed-header height="80vh" density="compact" class="pa-0">
+    <v-table fixed-header height="80vh" density="comfortable">
         <thead>
             <tr>
-                <th class="text-center">
-                    <v-btn v-if="isEditing" variant="text" icon="mdi-account-plus-outline" @click="scoreStore.addPlayer"></v-btn>
+                <th>
+                    <v-btn density="compact" variant="text" icon="mdi-account-plus-outline" @click="scoreStore.addPlayer"></v-btn>
                 </th>
                 <th v-for="(_, playerIndex) in scoreStore.players" :key="playerIndex">
-                    <v-text-field class="custom-text-field py-1" hide-details hide-spin-buttons reverse :variant="isEditing ? 'underlined' : 'plain'"
-                         v-model="scoreStore.players[playerIndex].name" :placeholder="scoreStore.players[playerIndex].placeholder">
+                    <v-text-field
+                        hide-details hide-spin-buttons reverse single-line
+                        class="custom-text-field py-1"
+                        density="comfortable"
+                        :variant="isEditing ? 'filled' : 'plain'"
+                        v-model="scoreStore.players[playerIndex].name" :placeholder="scoreStore.players[playerIndex].placeholder">
                         <template v-slot:append-inner v-if="isEditing">
                             <v-icon icon="mdi-trash-can-outline" size="small" color="primary" @click="scoreStore.deletePlayer(playerIndex)" />
                         </template>
@@ -108,7 +112,7 @@ function isWinner(playerIndex: number) {
 
         <tbody>
             <tr v-for="(round, roundIndex) in scoreStore.rounds" :key="roundIndex">
-                <td class="text-center round-color">{{ scoreStore.rounds.length > 1 ? roundIndex + 1 : "" }}
+                <td class="round-color d-flex align-center justify-center">{{ scoreStore.rounds.length > 1 ? roundIndex + 1 : "" }}
                         <v-icon v-if="isEditing"
                             icon="mdi-trash-can-outline"
                             size="small"
@@ -117,11 +121,16 @@ function isWinner(playerIndex: number) {
                             :disabled="scoreStore.isRoundEmpty(roundIndex)" />
                 </td>
                 <td v-for="(score, scoreIndex) in round.scores" :key="scoreIndex">
-                    <v-text-field :class="'text-right custom-text-field py-1 ' + (isRoundWinner(scoreIndex, roundIndex) ? 'winner-color-text-field' : '')" type="number"
-                        hide-details hide-spin-buttons reverse single-line density="compact" :variant="typeof score === 'number' ? 'plain' : 'underlined'" placeholder="—"
-                        v-model.number="round.scores[scoreIndex]" :autofocus="roundIndex == state.autofocus.round && scoreIndex == state.autofocus.score">
+                    <v-text-field
+                        hide-details hide-spin-buttons reverse single-line
+                        :class="'text-right custom-text-field ' + (isRoundWinner(scoreIndex, roundIndex) ? 'winner-color-text-field' : '')"
+                        density="compact"
+                        type="number"
+                        :variant="typeof score === 'number' ? 'plain' : 'filled'"
+                        v-model.number="round.scores[scoreIndex]"
+                        :autofocus="roundIndex == state.autofocus.round && scoreIndex == state.autofocus.score">
                         <template v-slot:prepend-inner>
-                            <v-icon class="pb-1" color="success" v-if="isRoundWinner(scoreIndex, roundIndex)" size="small" icon="mdi-star" />
+                            <v-icon color="success" v-if="isRoundWinner(scoreIndex, roundIndex)" size="small" icon="mdi-star" />
                         </template>
                     </v-text-field>
                 </td>
@@ -133,8 +142,14 @@ function isWinner(playerIndex: number) {
             <tr>
                 <td class="text-center"><v-icon icon="mdi-sigma" color="light"/></td>
                 <td v-for="(_, index) in scoreStore.playersTotal" :key="index" class="text-right">
-                    <v-text-field :class="'text-right custom-text-field py-1 ' + (isWinner(index) ? 'winner-color-text-field' : '')" type="number" hide-details hide-spin-buttons
-                        reverse single-line density="compact" variant="plain" v-model.number="scoreStore.playersTotal[index]" readonly>
+                    <v-text-field
+                        hide-details hide-spin-buttons reverse single-line
+                        :class="'text-right custom-text-field py-1 ' + (isWinner(index) ? 'winner-color-text-field' : '')"
+                        type="number"
+                        density="compact"
+                        variant="plain"
+                        v-model.number="scoreStore.playersTotal[index]"
+                        readonly>
                         <template v-slot:prepend-inner>
                             <v-icon class="pb-1" color="success" v-if="isWinner(index)" size="small" icon="mdi-star" />
                         </template>
@@ -161,23 +176,26 @@ td {
 
 table>thead>tr>th,
 table>tfoot>tr>td {
-    padding: 0 8px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
     background-color: rgb(var(--v-theme-secondary)) !important;
     color: #fff;
 }
 
 table>tbody>tr>td {
-    padding: 0 8px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
 }
 
 .custom-text-field /deep/ .v-field__input {
-    padding: 0;
+    padding-top: 0px !important;
+    padding-bottom: 2px !important;
     text-overflow: ellipsis;
     font-weight: 500;
 }
 
-.custom-text-field /deep/ .v-field__append-inner {
-    padding-top: 14px !important;
+.custom-text-field /deep/ .v-field__prepend-inner {
+    padding-top: 5px !important;
 }
 
 .custom-text-field /deep/ .v-field__prepend-inner > .v-icon {

@@ -29,7 +29,7 @@ let indexedGameHistory = computed(() => {
         <v-list-item-title>
             {{ game.name }}
         </v-list-item-title>
-        <v-list-item-subtitle>
+        <v-list-item-subtitle style="color: rgb(var(--v-theme-primary-darken-1));">
             <RelativeTime :time="new Date(game.date)" :locale="null"> </RelativeTime>
         </v-list-item-subtitle>
     </v-list-item>
