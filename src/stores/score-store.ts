@@ -53,6 +53,9 @@ export const useScoreStore = defineStore('score' + VERSION,
             players.value.splice(index, 1)
             playersTotal.value.splice(index, 1)
             rounds.value.forEach(round => round.scores.splice(index, 1))
+            if (players.value.length === 0) {
+                addPlayer()
+            }
         }
 
         function deleteAllPlayers() {
