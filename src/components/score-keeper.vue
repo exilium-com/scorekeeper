@@ -123,12 +123,13 @@ function isWinner(playerIndex: number) {
                 </td>
                 <td v-for="(score, scoreIndex) in round.scores" :key="scoreIndex">
                     <v-number-input
-                        inputmode="text"
+                        type="number"
+                        inputmode=undefined
                         hide-spin-buttons reverse single-line hide-details
                         :class="'text-right custom-text-field ' + (isRoundWinner(scoreIndex, roundIndex) ? 'winner-color-text-field' : '')"
                         density="compact"
                         :variant="typeof score === 'number' ? 'plain' : 'filled'"
-                        v-model="round.scores[scoreIndex]"
+                        v-model.number="round.scores[scoreIndex]"
                         :autofocus="roundIndex == state.autofocus.round && scoreIndex == state.autofocus.score">
                         <template v-slot:increment></template>
                         <template v-slot:decrement></template>
