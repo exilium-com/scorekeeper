@@ -8,6 +8,7 @@
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
 import type { ThemeDefinition } from 'vuetify'
+import { VNumberInput } from 'vuetify/labs/VNumberInput'
 
 // Composables
 import { createVuetify } from 'vuetify'
@@ -42,6 +43,9 @@ const customLightTheme: ThemeDefinition = {
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
+  components: {
+      VNumberInput
+  },
   theme: {
     defaultTheme: 'customLightTheme',
 

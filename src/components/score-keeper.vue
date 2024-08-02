@@ -2,12 +2,11 @@
 import { reactive, watch, onBeforeMount, onMounted, computed } from 'vue'
 import { useScoreStore } from '@/stores/score-store'
 import { isEditing } from '@/edit-mode'
-import { VNumberInput } from 'vuetify/labs/VNumberInput'
 
 const scoreStore = useScoreStore()
 
 let state = reactive({
-    autofocus: { round: -1, score: -1 } as { round: number, score: number },
+    autofocus: { round: -1, score: -1 } as { round: number, score: number }
 })
 
 watch(() => [scoreStore.rounds, scoreStore.players], () => {
