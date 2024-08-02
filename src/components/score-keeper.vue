@@ -123,7 +123,7 @@ function isWinner(playerIndex: number) {
                 </td>
                 <td v-for="(score, scoreIndex) in round.scores" :key="scoreIndex">
                     <v-number-input
-                        type="tel"
+                        inputmode="text"
                         hide-spin-buttons reverse single-line hide-details
                         :class="'text-right custom-text-field ' + (isRoundWinner(scoreIndex, roundIndex) ? 'winner-color-text-field' : '')"
                         density="compact"
