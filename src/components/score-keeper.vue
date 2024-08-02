@@ -2,6 +2,7 @@
 import { reactive, watch, onBeforeMount, onMounted, computed } from 'vue'
 import { useScoreStore } from '@/stores/score-store'
 import { isEditing } from '@/edit-mode'
+import { VNumberInput } from 'vuetify/labs/VNumberInput'
 
 const scoreStore = useScoreStore()
 
@@ -99,7 +100,8 @@ function isWinner(playerIndex: number) {
                         hide-details hide-spin-buttons reverse single-line
                         class="custom-text-field py-1"
                         density="comfortable"
-                        :variant="isEditing ? 'filled' : 'plain'"
+                        variant="plain"
+                        maxlength="15"
                         v-model="scoreStore.players[playerIndex].name" :placeholder="scoreStore.players[playerIndex].placeholder">
                         <template v-slot:append-inner v-if="isEditing">
                             <v-icon icon="mdi-trash-can-outline" size="small" color="primary" @click="scoreStore.deletePlayer(playerIndex)" />
@@ -121,18 +123,19 @@ function isWinner(playerIndex: number) {
                             :disabled="scoreStore.isRoundEmpty(roundIndex)" />
                 </td>
                 <td v-for="(score, scoreIndex) in round.scores" :key="scoreIndex">
-                    <v-text-field
-                        hide-details hide-spin-buttons reverse single-line
+                    <v-number-input
+                        hide-spin-buttons reverse single-line hide-details
                         :class="'text-right custom-text-field ' + (isRoundWinner(scoreIndex, roundIndex) ? 'winner-color-text-field' : '')"
                         density="compact"
-                        type="number"
                         :variant="typeof score === 'number' ? 'plain' : 'filled'"
-                        v-model.number="round.scores[scoreIndex]"
+                        v-model="round.scores[scoreIndex]"
                         :autofocus="roundIndex == state.autofocus.round && scoreIndex == state.autofocus.score">
+                        <template v-slot:increment></template>
+                        <template v-slot:decrement></template>
                         <template v-slot:prepend-inner>
                             <v-icon color="success" v-if="isRoundWinner(scoreIndex, roundIndex)" size="small" icon="mdi-star" />
                         </template>
-                    </v-text-field>
+                    </v-number-input>
                 </td>
             </tr>
         </tbody>
@@ -166,6 +169,12 @@ function isWinner(playerIndex: number) {
 
 
 <style scoped>
+
+/* Hide the vertical divider between the number input and the decrement button */
+.v-number-input /deep/ .v-divider--vertical {
+    display: none;
+}
+
 tbody {
     background-color: rgb(var(--v-theme-background)) !important;
 }
@@ -196,6 +205,10 @@ table>tbody>tr>td {
 
 .custom-text-field /deep/ .v-field__prepend-inner {
     padding-top: 5px !important;
+}
+
+.custom-text-field /deep/ .v-field__append-inner {
+    padding-top: 9px !important;
 }
 
 .custom-text-field /deep/ .v-field__prepend-inner > .v-icon {

@@ -49,7 +49,7 @@ function switchEditMode()
    <template v-slot:title>
       <span class="text-primary font-weight-bold">Score Keeper</span>
    </template>
-   <v-btn :variant="isEditing ? 'tonal' : 'plain'" icon="mdi-pencil" @click="switchEditMode()" :active="isEditing" :color="isEditing ? 'primary' : undefined"></v-btn>
+   <v-btn icon="mdi-pencil" @click="switchEditMode()" :active="isEditing" :color="isEditing ? 'primary' : undefined"></v-btn>
    <v-btn :disabled="!isSharingSupported" @click="startShare('scoreKeeperId')" icon="mdi-share-variant"></v-btn>
    <ScoreKeeperMenu />
 </v-app-bar>
