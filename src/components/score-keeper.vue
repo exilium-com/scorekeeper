@@ -19,17 +19,14 @@ watch(() => [scoreStore.rounds, scoreStore.players], () => {
         }
         // if all scores in the last round have a value, add a new round
         if (scoreStore.rounds.length == 0 ||
-            (scoreStore.rounds.length > 0 && isRoundComplete(scoreStore.rounds[scoreStore.rounds.length - 1]))) {
-            scoreStore.rounds.push({
-                round: scoreStore.rounds.length + 1,
-                scores: Array(scoreStore.players.length).fill({score: null}),
-            })
+            (scoreStore.rounds.length > 0 && scoreStore.isRoundComplete(scoreStore.rounds.length - 1))) {
+            scoreStore.addRound()
         }
 
         // if we added an empty round but user is still editing the previous round, remove it
         if (scoreStore.rounds.length > 2 &&
-            !isRoundComplete(scoreStore.rounds[scoreStore.rounds.length - 2]) &&
-            isRoundEmpty(scoreStore.rounds[scoreStore.rounds.length - 1])) {
+            !scoreStore.isRoundComplete(scoreStore.rounds.length - 2) &&
+            scoreStore.isRoundEmpty(scoreStore.rounds.length - 1)) {
             scoreStore.rounds.pop()
         }
     }
@@ -68,13 +65,6 @@ function isRoundWinner(scoreIndex: number, roundIndex: number) {
     return scoreStore.rounds[roundIndex].scores[scoreIndex].score === maxScore
 }
 
-function isRoundComplete(round: { scores: Score[] }) {
-    return round.scores.every(score => typeof score.score === 'number')
-}
-
-function isRoundEmpty(round: { scores: Score[] }) {
-    return round.scores.every(score => typeof score.score !== 'number')
-}
 
 function isWinner(playerIndex: number) {
     if (scoreStore.rounds.length < 2) {

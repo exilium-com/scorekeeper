@@ -16,7 +16,7 @@ export const useScoreStore = defineStore('score' + VERSION,
         const players = ref<Player[]>([])
         const rounds = ref<Round[]>([])
         const playersTotal = ref<number[]>([])
-        let lastPlayerNumber = 1
+        let lastPlayerNumber = ref(1)
         const gameHistory = ref<{ date: Date, name: string, encodedScores: string }[]>([{date: new Date(), name: 'new game', encodedScores: ''}])
         const curGame = ref(0)
         const theme = ref('dark')
@@ -41,11 +41,11 @@ export const useScoreStore = defineStore('score' + VERSION,
             players.value = data.p.map((name: string, i: number) => { return { name: name, placeholder: 'Player' + (i + 1) } })
             rounds.value = data.r.map((scores: number[], roundIndex: number) => { return { round: roundIndex, scores: scores.map((score: number) => { return { score: score } }) } })
             playersTotal.value = players.value.map((_, i) => rounds.value.reduce((total, round) => total + round.scores[i].score, 0))
-            lastPlayerNumber = players.value.length + 1
+            lastPlayerNumber.value = players.value.length + 1
         }
 
         function addPlayer() {
-            players.value.push({name: '', placeholder: 'Player' + (lastPlayerNumber++)})
+            players.value.push({name: '', placeholder: 'Player' + (lastPlayerNumber.value++)})
             rounds.value.forEach(round => round.scores.push({score: null}))
         }
 
@@ -66,9 +66,17 @@ export const useScoreStore = defineStore('score' + VERSION,
             addPlayer()
         }
 
+        function addRound() {
+            rounds.value.push({
+                round: rounds.value.length + 1,
+                scores: Array.from({ length: players.value.length }, _ => ({score: null})),
+            })
+
+        }
+
         function deleteRound(index: number) {
             rounds.value.splice(index, 1)
-            playersTotal.value = playersTotal.value.map((total, i) => total - rounds.value[index].scores[i].score)
+            playersTotal.value = playersTotal.value.map((_, i) => rounds.value.reduce((total, round) => total + round.scores[i]?.score, 0))
         }
 
         function saveCurrentGame() {
@@ -78,7 +86,11 @@ export const useScoreStore = defineStore('score' + VERSION,
         }
 
         function isRoundEmpty(roundIndex: number) {
-            return rounds.value[roundIndex].scores.every(score => typeof score !== 'number')
+            return rounds.value[roundIndex].scores.every(score => typeof score.score !== 'number')
+        }
+
+        function isRoundComplete(roundIndex: number) {
+            return rounds.value[roundIndex].scores.every(score => typeof score.score === 'number')
         }
 
         function newGame() {
@@ -97,7 +109,7 @@ export const useScoreStore = defineStore('score' + VERSION,
             decodeScores(gameHistory.value[curGame.value].encodedScores)
         }
 
-        return { players, rounds, playersTotal, curGame, addPlayer, deletePlayer, deleteAllPlayers, newGame, deleteRound, encodeScores, decodeScores, changeGame, gameHistory, currentEncodedScores, isRoundEmpty, theme }
+        return { players, rounds, playersTotal, curGame, addPlayer, deletePlayer, deleteAllPlayers, newGame, addRound, deleteRound, encodeScores, decodeScores, changeGame, gameHistory, currentEncodedScores, isRoundEmpty, isRoundComplete, theme }
     },
     {
         persist: true
