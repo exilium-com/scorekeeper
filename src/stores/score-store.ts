@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
-import { Round, Player } from '@/types/player'
+import { Round, Player, Score } from '@/types/player'
 import { ref } from 'vue'
 import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from 'lz-string'
 import { sendAnalyticsEvent } from '@/analytics'
 
-const VERSION = '0.12'
+const VERSION = '0.142'
 
 interface ShareableScore {
     p: string[]     // player names
@@ -25,7 +25,7 @@ export const useScoreStore = defineStore('score' + VERSION,
             // encode into json
             const scores: ShareableScore = { p: [], r: [] }
             players.value.forEach((player: Player) => scores.p.push(player.name))
-            rounds.value.forEach((round: Round) => scores.r.push(round.scores))
+            rounds.value.forEach((round: Round) => scores.r.push(round.scores.map((score: Score) => score.score)))
             const json = JSON.stringify(scores)
             // console.log(json.length, btoa(json).length, compressToEncodedURIComponent(json).length)
             gameHistory.value[curGame.value].encodedScores = compressToEncodedURIComponent(json)
@@ -35,18 +35,18 @@ export const useScoreStore = defineStore('score' + VERSION,
             return gameHistory.value[curGame.value].encodedScores
         }
 
-        function decodeScores(scores: string) {
+        function decodeScores(encodedScores: string) {
             // decode from json
-            const data = JSON.parse(decompressFromEncodedURIComponent(scores))
+            const data = JSON.parse(decompressFromEncodedURIComponent(encodedScores))
             players.value = data.p.map((name: string, i: number) => { return { name: name, placeholder: 'Player' + (i + 1) } })
-            rounds.value = data.r.map((scores: number[], roundIndex: number) => { return { round: roundIndex, scores: scores } })
-            playersTotal.value = players.value.map((_, i) => rounds.value.reduce((total, round) => total + round.scores[i], 0))
+            rounds.value = data.r.map((scores: number[], roundIndex: number) => { return { round: roundIndex, scores: scores.map((score: number) => { return { score: score } }) } })
+            playersTotal.value = players.value.map((_, i) => rounds.value.reduce((total, round) => total + round.scores[i].score, 0))
             lastPlayerNumber = players.value.length + 1
         }
 
         function addPlayer() {
             players.value.push({name: '', placeholder: 'Player' + (lastPlayerNumber++)})
-            rounds.value.forEach(round => round.scores.push(null))
+            rounds.value.forEach(round => round.scores.push({score: null}))
         }
 
         function deletePlayer(index: number) {
@@ -68,7 +68,7 @@ export const useScoreStore = defineStore('score' + VERSION,
 
         function deleteRound(index: number) {
             rounds.value.splice(index, 1)
-            playersTotal.value = playersTotal.value.map((total, i) => total - rounds.value[index].scores[i])
+            playersTotal.value = playersTotal.value.map((total, i) => total - rounds.value[index].scores[i].score)
         }
 
         function saveCurrentGame() {

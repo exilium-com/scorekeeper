@@ -19,10 +19,11 @@ const customDarkTheme: ThemeDefinition = {
         primary: '#FF702D',
         secondary: '#26497F',
         background: '#212121',
-        error: '#DC4C64',
+        error: '#FF702D',
         success: '#E25D1F',
         dark: '#000000',
         light: '#FFFFFF',
+        winner: '#CCA300'
     }
 }
 
@@ -33,10 +34,11 @@ const customLightTheme: ThemeDefinition = {
         secondary: '#26497F',
         background: '#FFFFFF',
         info: '#0099A7',
-        error: '#DC4C64',
+        error: '#FF702D',
         success: '#FF6923',
         dark: '#162C49',
         light: '#D1E5F1',
+        winner: '#B29100'
     }
 }
 

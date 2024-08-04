@@ -1,33 +1,35 @@
 <script setup lang="ts">
-import { reactive, watch, onBeforeMount, onMounted, computed } from 'vue'
+import { reactive, watch, onBeforeMount, onMounted } from 'vue'
 import { useScoreStore } from '@/stores/score-store'
 import { isEditing } from '@/edit-mode'
+import { Score } from '@/types/player'
 
 const scoreStore = useScoreStore()
 
 let state = reactive({
-    autofocus: { round: -1, score: -1 } as { round: number, score: number }
+    autofocus: { round: -1, score: -1 } as { round: number, score: number },
 })
+
 
 watch(() => [scoreStore.rounds, scoreStore.players], () => {
     for (let i = 0; i < scoreStore.players.length; i++) {
         scoreStore.playersTotal[i] = 0
         for (let round of scoreStore.rounds) {
-            scoreStore.playersTotal[i] = (scoreStore.playersTotal[i] || 0) + round.scores[i]
+            scoreStore.playersTotal[i] = (scoreStore.playersTotal[i] || 0) + round.scores[i]?.score
         }
         // if all scores in the last round have a value, add a new round
         if (scoreStore.rounds.length == 0 ||
-            (scoreStore.rounds.length > 0 && scoreStore.rounds[scoreStore.rounds.length - 1].scores.every(score => typeof score === 'number'))) {
+            (scoreStore.rounds.length > 0 && isRoundComplete(scoreStore.rounds[scoreStore.rounds.length - 1]))) {
             scoreStore.rounds.push({
                 round: scoreStore.rounds.length + 1,
-                scores: Array(scoreStore.players.length).fill(null),
+                scores: Array(scoreStore.players.length).fill({score: null}),
             })
         }
 
         // if we added an empty round but user is still editing the previous round, remove it
         if (scoreStore.rounds.length > 2 &&
-            !scoreStore.rounds[scoreStore.rounds.length - 2].scores.every(score => typeof score === 'number') &&
-            scoreStore.rounds[scoreStore.rounds.length - 1].scores.every(score => typeof score !== 'number')) {
+            !isRoundComplete(scoreStore.rounds[scoreStore.rounds.length - 2]) &&
+            isRoundEmpty(scoreStore.rounds[scoreStore.rounds.length - 1])) {
             scoreStore.rounds.pop()
         }
     }
@@ -62,27 +64,49 @@ function isRoundWinner(scoreIndex: number, roundIndex: number) {
     if (scoreStore.rounds.length < 1) {
         return false
     }
-    if (scoreStore.rounds[roundIndex].scores.every(score => typeof score === 'number')) {
-        let maxScore = Math.max(...scoreStore.rounds[roundIndex].scores)
-        return scoreStore.rounds[roundIndex].scores[scoreIndex] === maxScore
-    }
-    else {
-        return false
-    }
+    let maxScore = Math.max(...scoreStore.rounds[roundIndex].scores.map(score => typeof score.score !== 'number' ? Number.MIN_SAFE_INTEGER : score.score ))
+    return scoreStore.rounds[roundIndex].scores[scoreIndex].score === maxScore
 }
 
+function isRoundComplete(round: { scores: Score[] }) {
+    return round.scores.every(score => typeof score.score === 'number')
+}
+
+function isRoundEmpty(round: { scores: Score[] }) {
+    return round.scores.every(score => typeof score.score !== 'number')
+}
 
 function isWinner(playerIndex: number) {
     if (scoreStore.rounds.length < 2) {
         return false
     }
-    if (scoreStore.playersTotal.every(score => typeof score === 'number')) {
-        let maxScore = Math.max(...scoreStore.playersTotal)
-        return scoreStore.playersTotal[playerIndex] === maxScore
+    let maxScore = Math.max(...scoreStore.playersTotal.map(total => typeof total !== 'number' ? Number.MIN_SAFE_INTEGER : total ))
+    return scoreStore.playersTotal[playerIndex] === maxScore
+}
+
+function checkDigit(e: KeyboardEvent) {
+    if (
+        ['Enter', 'ArrowLeft', 'ArrowRight', 'Backspace', 'Delete', 'Tab'].includes(e.key) ||
+        e.ctrlKey
+      ) return
+
+    // Only numbers, +, - & . are allowed
+    if (!/^[0-9\-+.]+$/.test(e.key)) {
+        e.preventDefault()
+        console.log('Only numbers, +, - & . are allowed')
+      }
+}
+
+function checkValidity(e: InputEvent, roundIndex: number, scoreIndex: number) {
+    console.log('checkValidity: ', e, e.target.value, e.target.validity.valid)
+    const round = scoreStore.rounds[roundIndex]
+    if (!e.target.validity.valid) {
+        round.scores[scoreIndex].invalid = true
     }
-    else {
-        return false
+    else if (round.scores[scoreIndex].invalid) {
+        round.scores[scoreIndex].invalid = undefined
     }
+    console.log('checkValidity', round.scores[scoreIndex])
 }
 
 </script>
@@ -122,21 +146,27 @@ function isWinner(playerIndex: number) {
                             :disabled="scoreStore.isRoundEmpty(roundIndex)" />
                 </td>
                 <td v-for="(score, scoreIndex) in round.scores" :key="scoreIndex">
-                    <v-number-input
+                    <v-text-field
                         type="number"
                         inputmode=undefined
                         hide-spin-buttons reverse single-line hide-details
-                        :class="'text-right custom-text-field ' + (isRoundWinner(scoreIndex, roundIndex) ? 'winner-color-text-field' : '')"
+                        class="text-right custom-text-field"
+                        :class="{ 'winner-color-text-field': isRoundWinner(scoreIndex, roundIndex),
+                                  'error-color-text-field': score.invalid?? undefined}"
                         density="compact"
-                        :variant="typeof score === 'number' ? 'plain' : 'filled'"
-                        v-model.number="round.scores[scoreIndex]"
-                        :autofocus="roundIndex == state.autofocus.round && scoreIndex == state.autofocus.score">
-                        <template v-slot:increment></template>
-                        <template v-slot:decrement></template>
+                        :variant="!!score.score ? 'plain' : 'filled'"
+                        v-model.number="round.scores[scoreIndex].score"
+                        :autofocus="roundIndex == state.autofocus.round && scoreIndex == state.autofocus.score"
+                        @keydown="checkDigit"
+                        @input="checkValidity($event, roundIndex, scoreIndex)">
+                        <!-- {{ `score=${score}` }}
+                        {{ typeof score.score }}
+                        {{ score.invalid }} -->
+
                         <template v-slot:prepend-inner>
-                            <v-icon color="success" v-if="isRoundWinner(scoreIndex, roundIndex)" size="small" icon="mdi-star" />
+                            <v-icon color="winner" v-if="isRoundWinner(scoreIndex, roundIndex)" size="small" icon="mdi-star" />
                         </template>
-                    </v-number-input>
+                    </v-text-field>
                 </td>
             </tr>
         </tbody>
@@ -155,7 +185,7 @@ function isWinner(playerIndex: number) {
                         v-model.number="scoreStore.playersTotal[index]"
                         readonly>
                         <template v-slot:prepend-inner>
-                            <v-icon class="pb-1" color="success" v-if="isWinner(index)" size="small" icon="mdi-star" />
+                            <v-icon class="pb-1" color="winner" v-if="isWinner(index)" size="small" icon="mdi-star" />
                         </template>
                     </v-text-field>
 
@@ -217,7 +247,11 @@ table>tbody>tr>td {
 }
 
 .winner-color-text-field /deep/ .v-field__input {
-    color: rgb(var(--v-theme-success)) !important;
+    color: rgb(var(--v-theme-winner)) !important;
+}
+
+.error-color-text-field /deep/ .v-field__input {
+    color: rgb(var(--v-theme-error)) !important;
 }
 
 .round-color {
