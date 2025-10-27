@@ -7,14 +7,23 @@ const scoreStore = useScoreStore()
 
 const theme = useTheme()
 
-const currentTheme = computed(() => theme.global.name.value === 'customDarkTheme'
-    ? {icon: 'mdi-weather-sunny', text: 'Light Theme'}
-    : {icon: 'mdi-weather-night', text: 'Dark Theme'}
-  )
+// single source of truth: is the current theme dark?
+const isDark = computed(() => theme.global.current.value.dark)
+
+const currentTheme = computed(() => isDark.value
+  ? { icon: 'mdi-weather-sunny', text: 'Light Theme' }
+  : { icon: 'mdi-weather-night', text: 'Dark Theme' }
+)
 
 function toggleTheme() {
-    theme.global.name.value = theme.global.current.value.dark ? 'customLightTheme' : 'customDarkTheme'
-    scoreStore.theme = theme.global.name.value === 'customDarkTheme' ? 'dark' : 'light'
+  // check once and handle each branch explicitly
+  if (isDark.value) {
+    theme.change('customLightTheme')
+    scoreStore.theme = 'light'
+  } else {
+    theme.change('customDarkTheme')
+    scoreStore.theme = 'dark'
+  }
 }
 </script>
 

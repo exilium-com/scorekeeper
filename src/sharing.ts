@@ -8,7 +8,7 @@ import { sendAnalyticsEvent } from "@/analytics";
 
 const scoreStore = useScoreStore();
 
-let sharingOptions = ref({
+const sharingOptions = ref({
   title: "Score Keeper",
   text: "Current Scores",
   url: isClient ? location.href : "",

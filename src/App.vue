@@ -19,8 +19,9 @@ function setTheme() {
         }
     }
 
-    const theme = useTheme()
-    theme.global.name.value = lightTheme ? 'customLightTheme' : 'customDarkTheme'
+  const theme = useTheme()
+  // use the public API to change themes (assignment to theme.global.name.value is deprecated)
+  theme.change(lightTheme ? 'customLightTheme' : 'customDarkTheme')
 }
 
 onMounted(() => {
