@@ -15,7 +15,8 @@ watch(
         for (let i = 0; i < scoreStore.players.length; i++) {
             scoreStore.playersTotal[i] = 0
             for (const round of scoreStore.rounds) {
-                scoreStore.playersTotal[i] = (scoreStore.playersTotal[i] || 0) + round.scores[i]?.score
+                const roundScore = round.scores[i]?.score ?? 0
+                scoreStore.playersTotal[i] = (scoreStore.playersTotal[i] ?? 0) + roundScore
             }
             // if all scores in the last round have a value, add a new round
             if (scoreStore.rounds.length == 0 || (scoreStore.rounds.length > 0 && scoreStore.isRoundComplete(scoreStore.rounds.length - 1))) {

@@ -8,7 +8,7 @@ const VERSION = '0.142'
 
 interface ShareableScore {
     p: string[] // player names
-    r: number[][] // scores for each round for each player
+    r: (number | null)[][] // scores for each round for each player
 }
 
 export const useScoreStore = defineStore(
@@ -26,7 +26,9 @@ export const useScoreStore = defineStore(
             // encode into json
             const scores: ShareableScore = { p: [], r: [] }
             players.value.forEach((player: Player) => scores.p.push(player.name))
-            rounds.value.forEach((round: Round) => scores.r.push(round.scores.map((score: Score) => score.score)))
+            rounds.value.forEach((round: Round) =>
+                scores.r.push(round.scores.map((score: Score) => (typeof score.score === 'number' ? score.score : null)))
+            )
             const json = JSON.stringify(scores)
             // console.log(json.length, btoa(json).length, compressToEncodedURIComponent(json).length)
             gameHistory.value[curGame.value].encodedScores = compressToEncodedURIComponent(json)
@@ -42,15 +44,15 @@ export const useScoreStore = defineStore(
             players.value = data.p.map((name: string, i: number) => {
                 return { name: name, placeholder: 'Player' + (i + 1) }
             })
-            rounds.value = data.r.map((scores: number[], roundIndex: number) => {
+            rounds.value = data.r.map((scores: (number | null)[], roundIndex: number) => {
                 return {
                     round: roundIndex,
-                    scores: scores.map((score: number) => {
-                        return { score: score }
+                    scores: scores.map((score: number | null) => {
+                        return { score: typeof score === 'number' ? score : null }
                     }),
                 }
             })
-            playersTotal.value = players.value.map((_, i) => rounds.value.reduce((total, round) => total + round.scores[i].score, 0))
+            playersTotal.value = players.value.map((_, i) => rounds.value.reduce((total, round) => total + (round.scores[i]?.score ?? 0), 0))
             lastPlayerNumber.value = players.value.length + 1
         }
 
@@ -85,7 +87,7 @@ export const useScoreStore = defineStore(
 
         function deleteRound(index: number) {
             rounds.value.splice(index, 1)
-            playersTotal.value = playersTotal.value.map((_, i) => rounds.value.reduce((total, round) => total + round.scores[i]?.score, 0))
+            playersTotal.value = playersTotal.value.map((_, i) => rounds.value.reduce((total, round) => total + (round.scores[i]?.score ?? 0), 0))
         }
 
         function saveCurrentGame() {
