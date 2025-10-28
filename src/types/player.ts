@@ -1,16 +1,14 @@
-
 export interface Player {
     name: string
     placeholder: string
 }
 
 export interface Score {
-    score: number
+    score: number | null
     invalid?: boolean
 }
 
 export interface Round {
     round: number
-    scores: Score []
-  }
-
+    scores: Score[]
+}

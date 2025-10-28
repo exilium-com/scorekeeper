@@ -7,8 +7,8 @@ const router = createRouter({
             path: '/',
             name: 'root',
             component: () => import('../pages/index.vue'),
-        }
-    ]
+        },
+    ],
 })
 
 export default router

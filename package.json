@@ -3,10 +3,13 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "run-p type-check \"build-only {@}\" --",
     "build-only": "vite build",
+    "type-check": "vue-tsc --noEmit",
     "preview": "vite preview",
-    "lint": "eslint . --fix --ignore-pattern .gitignore"
+    "lint": "eslint . --fix --ignore-pattern .gitignore",
+    "format": "prettier --write src/ --list-different",
+    "all": "run-p lint format type-check build-only"
   },
   "dependencies": {
     "@mdi/font": "7.4.47",
@@ -29,7 +32,9 @@
     "@typescript-eslint/parser": "^8.46.2",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/eslint-config-typescript": "^14.6.0",
+    "@vue/eslint-config-prettier": "^10.2.0",
     "eslint": "^9.38.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-n": "^16.6.2",
     "eslint-plugin-node": "^11.1.0",
@@ -37,6 +42,8 @@
     "eslint-plugin-unicorn": "^45.0.2",
     "eslint-plugin-vue": "^10.5.1",
     "globals": "^16.4.0",
+    "npm-run-all2": "^8.0.4",
+    "prettier": "3.6.2",
     "sass": "1.93.2",
     "typescript": "^5.9.2",
     "unplugin-fonts": "^1.4",
