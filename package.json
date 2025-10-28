@@ -6,7 +6,7 @@
     "build": "vue-tsc --noEmit && vite build",
     "build-only": "vite build",
     "preview": "vite preview",
-    "lint": "eslint . --fix --ignore-path .gitignore"
+    "lint": "eslint . --fix --ignore-pattern .gitignore"
   },
   "dependencies": {
     "@mdi/font": "7.4.47",
@@ -25,15 +25,18 @@
   "devDependencies": {
     "@babel/types": "^7.28.4",
     "@types/node": "^22",
+    "@typescript-eslint/eslint-plugin": "^8.46.2",
+    "@typescript-eslint/parser": "^8.46.2",
     "@vitejs/plugin-vue": "^6.0.1",
-    "@vue/eslint-config-typescript": "^13.0.0",
-    "eslint": "^8.57.0",
-    "eslint-config-standard": "^17.1.0",
+    "@vue/eslint-config-typescript": "^14.6.0",
+    "eslint": "^9.38.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-n": "^16.6.2",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.4.0",
-    "eslint-plugin-vue": "^9.27.0",
+    "eslint-plugin-unicorn": "^45.0.2",
+    "eslint-plugin-vue": "^10.5.1",
+    "globals": "^16.4.0",
     "sass": "1.93.2",
     "typescript": "^5.9.2",
     "unplugin-fonts": "^1.4",

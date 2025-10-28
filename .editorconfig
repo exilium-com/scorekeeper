@@ -1,5 +1,15 @@
-[*.{js,jsx,ts,tsx,vue}]
+root = true
+
+# Default (applies to all files). Use spaces and 4-space indentation everywhere.
+[ * ]
 indent_style = space
-indent_size = 2
+indent_size = 4
+end_of_line = lf
+charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
+max_line_length = 150
+
+# Ensure specific filetypes inherit the default (keeps file simpler).
+[*.{js,jsx,ts,tsx,vue,html,css,scss,json,md}]
+indent_size = 2
