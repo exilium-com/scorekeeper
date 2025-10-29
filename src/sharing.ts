@@ -8,7 +8,7 @@ import { sendAnalyticsEvent } from '@/analytics'
 declare global {
     interface Window {
         AddToHomeScreen: {
-            new (options: { appName: string; appIconUrl: string; assetUrl: string; showErrorMessageForUnsupportedBrowsers: unknown }): {
+            new (options: { appName: string; appIconUrl: string; assetUrl: string; appNameDisplay: 'inline' | 'standalone' | undefined }): {
                 show: () => void
             }
             SHOW_ERRMSG_UNSUPPORTED: {
@@ -30,9 +30,9 @@ export const { share, isSupported: isSharingSupported } = useShare(sharingOption
 
 const addToHomeScreenInstance = new window.AddToHomeScreen({
     appName: 'Score Keeper',
+    appNameDisplay: 'inline',
     appIconUrl: 'apple-touch-icon.png',
-    assetUrl: 'https://cdn.jsdelivr.net/gh/philfung/add-to-homescreen@1.8/dist/assets/img/',
-    showErrorMessageForUnsupportedBrowsers: window.AddToHomeScreen.SHOW_ERRMSG_UNSUPPORTED.ALL,
+    assetUrl: 'https://cdn.jsdelivr.net/gh/philfung/add-to-homescreen@3.4/dist/assets/img/',
 })
 
 function updateSharingText() {
